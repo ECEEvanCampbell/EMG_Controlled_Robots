@@ -16,7 +16,7 @@ from cflib.utils import uri_helper
 HOST = '127.0.0.1'
 PORT = 12346
 DEFAULT_HEIGHT = 0.5
-BOX_LIMIT = 3
+BOX_LIMIT = 1.5
 DRONENUMBER = '0D'
 
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -75,19 +75,19 @@ def move_emg(scf):
             classifier = data[0]
             vel = float(data[2:5])
             if (classifier == '1'):
-                if position_estimate[1] > BOX_LIMIT:
+                if position_estimate[0] > BOX_LIMIT:
                     mc.stop()
                 else:
                     mc.start_forward(velocity=vel)
                 i = 0
             elif (classifier == '0'):
-                if position_estimate[1] < -BOX_LIMIT:
+                if position_estimate[0] < -BOX_LIMIT:
                     mc.stop()
                 else:
                     mc.start_back(velocity=vel)
                 i = 0
             elif (classifier == '4'):
-                if position_estimate[0] > BOX_LIMIT:
+                if position_estimate[1] > BOX_LIMIT:
                     mc.stop()
                 else:
                     mc.start_left(velocity=vel)

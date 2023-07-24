@@ -16,9 +16,9 @@ def on_packet(packet):
         tb.writelines(line)
     with open("Data/copter.csv", "a") as cp:
         line = str(time.perf_counter()) + "," +\
-                str(markers[1][0][0]) + "," + \
-                str(markers[1][0][1]) + "," + \
-                str(markers[1][0][2]) + "\n"
+                str(markers[2][0][0]) + "," + \
+                str(markers[2][0][1]) + "," + \
+                str(markers[2][0][2]) + "\n"
         cp.writelines(line)
 
 

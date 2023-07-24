@@ -8,7 +8,7 @@ def main():
     data = np.genfromtxt(FILE_LOCATION, delimiter=",")
     fig = plt.figure()
     ax = fig.add_subplot(projection='3d')
-    series = ax.scatter(data[:,0], data[:,1], data[:,2], c=data[:,0])
+    series = ax.scatter(data[:,1], data[:,2], data[:,3], c=data[:,0])
     ax.set_xlabel("x")
     ax.set_ylabel("y")
     ax.set_zlabel("z")
