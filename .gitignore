@@ -1,1 +1,6 @@
-Data/subject*
+data/subject*
+Figures/*
+.vscode/*
+__pycache__/*
+cache/*
+Data/*

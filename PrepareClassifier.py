@@ -13,7 +13,7 @@ def collect_data():
     odh.start_listening()
     # Launch training ui
     training_ui = libemg.screen_guided_training.ScreenGuidedTraining()
-    training_ui.download_gestures([1,2,3,4,5,6,7], "images/") #downloads images from github repo
+    training_ui.download_gestures([1,2,3,4,5], "images/") #downloads images from github repo
     training_ui.launch_training(odh, 3, 3, "images/", "Data/subject" + str(USER_ID) +"/SGT/", 3)
     p.kill()
 
@@ -66,6 +66,6 @@ def start_live_classifier(offline_classifier):
     classifier.run(block=True)
 
 if __name__ == "__main__":
-    #collect_data()
+    # collect_data()
     offline_classifier = prepare_classifier()
     start_live_classifier(offline_classifier)

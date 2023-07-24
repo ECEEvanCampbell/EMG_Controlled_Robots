@@ -4,7 +4,7 @@ import time
 from threading import Event
 import socket
 import keyboard
-
+import numpy as np
 
 import cflib.crtp
 from cflib.crazyflie import Crazyflie
@@ -17,7 +17,7 @@ HOST = '127.0.0.1'
 PORT = 12346
 DEFAULT_HEIGHT = 0.5
 BOX_LIMIT = 1.5
-DRONENUMBER = '0D'
+DRONENUMBER = '0D'#'1A'##
 
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 s.bind((HOST, PORT))
@@ -28,27 +28,6 @@ deck_attached_event = Event()
 logging.basicConfig(level=logging.ERROR)
 
 position_estimate = [0, 0]
-
-# def move_box_limit(scf):
-#     with MotionCommander(scf, default_height=DEFAULT_HEIGHT) as mc:
-
-#         body_x_cmd = 0.2
-#         body_y_cmd = 0.1
-#         max_vel = 0.2
-
-#         while (1):
-#             if position_estimate[0] > BOX_LIMIT:
-#                  body_x_cmd=-max_vel
-#             elif position_estimate[0] < -BOX_LIMIT:
-#                 body_x_cmd=max_vel
-#             if position_estimate[1] > BOX_LIMIT:
-#                 body_y_cmd=-max_vel
-#             elif position_estimate[1] < -BOX_LIMIT:
-#                 body_y_cmd=max_vel
-
-#             mc.start_linear_motion(body_x_cmd, body_y_cmd, 0)
-
-#             time.sleep(0.1)
 
 def log_pos_callback(timestamp, data, logconf):
     print(data)
@@ -72,27 +51,30 @@ def move_emg(scf):
         while True:
             data, _ = s.recvfrom(1024)
             data = str(data.decode('utf-8'))
-            classifier = data[0]
-            vel = float(data[2:5])
-            if (classifier == '1'):
-                if position_estimate[0] > BOX_LIMIT:
+            file_parts = data.split(" ")
+            probs = [float(i) for i in file_parts[:5]]
+            classifier = np.argmax(probs)
+
+            vel = float(file_parts[5]) * 0.25
+            if (classifier == 0):
+                if position_estimate[0] < -BOX_LIMIT:
                     mc.stop()
                 else:
                     mc.start_forward(velocity=vel)
                 i = 0
-            elif (classifier == '0'):
-                if position_estimate[0] < -BOX_LIMIT:
+            elif (classifier == 1):
+                if position_estimate[0] > BOX_LIMIT:
                     mc.stop()
                 else:
                     mc.start_back(velocity=vel)
                 i = 0
-            elif (classifier == '4'):
+            elif (classifier == 3):
                 if position_estimate[1] > BOX_LIMIT:
                     mc.stop()
                 else:
                     mc.start_left(velocity=vel)
                 i = 0
-            elif (classifier == '3'):
+            elif (classifier == 4):
                 if position_estimate[1] < -BOX_LIMIT:
                     mc.stop()
                 else:
@@ -160,18 +142,6 @@ if __name__ == '__main__':
 
         logconf.start()
 
-        #move_linear_simple(scf)
-        #move_emg(scf)
         move_emg(scf)
 
         logconf.stop()
-
-    #     def move_linear_simple(scf):
-    # with MotionCommander(scf, default_height=DEFAULT_HEIGHT) as mc:
-    #     time.sleep(1)
-    #     mc.forward(0.5)
-    #     time.sleep(1)
-    #     mc.turn_left(180)
-    #     time.sleep(1)
-    #     mc.forward(0.5)
-    #     time.sleep(1)
